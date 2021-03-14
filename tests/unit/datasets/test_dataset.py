@@ -91,7 +91,17 @@ def test_delete_rows(simple_numeric_dataset):
     assert y.tolist() == [20, 30, 40]
     assert simple_numeric_dataset.row_count() == 3
 
-    simple_numeric_dataset.delete_rows(1, 20)
+    """
+        Modificacion.
+            Autor: JDM 10/03/2021
+            Description:
+                De --> "simple_numeric_dataset.delete_rows(1, 20)"
+                A -->  "simple_numeric_dataset.delete_rows(1, 2)"
+            Reason: 
+                Existia un 'typo' por el cual se asignaba a borrar 20 elementos,
+                cuando el array solo tenia 3.
+    """
+    simple_numeric_dataset.delete_rows(1, 2)
 
     x, y = simple_numeric_dataset.head(3)
 

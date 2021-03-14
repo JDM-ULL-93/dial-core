@@ -6,6 +6,7 @@ import pytest
 
 import dial_core
 
+from pathlib import Path
 
 def test_default_project(project_manager, project_manager_default_project):
     # Check that they're NOT THE SAME OBJECT (ADDRESS)
@@ -119,5 +120,5 @@ def test_save_project_as(_, project_manager):
     assert not project_manager.active.file_path
 
     project_manager.save_project_as(project_manager.active, "foo_dir")
-
-    assert project_manager.active.file_path == "foo_dir/TestProject/TestProject.dial"
+    pathSaved = Path("foo_dir/TestProject/TestProject.dial")
+    assert project_manager.active.file_path == str(pathSaved)

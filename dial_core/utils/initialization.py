@@ -61,6 +61,9 @@ def get_arg_parser() -> "argparse.ArgumentParser":
         choices=["critical", "error", "warning", "info", "debug"],
     )
 
+    #Descartada idea de añadir opción "--pluginsDirectory"
+    #Esto se puede configurar asignando nuevas rutas a la variable de entorno "PYTHONPATH"
+  
     return parser
 
 
