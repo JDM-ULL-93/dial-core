@@ -11,12 +11,32 @@ LOGGER = log.get_logger(__name__)
 
 class Plugin:
     def __init__(self, name: str, plugins_specs: dict):
+
         self._name = name
         self._version = plugins_specs["version"]
         self._summary = plugins_specs["summary"]
         self._active = plugins_specs["active"]
-
         self._module = None
+        #Editado por JDM
+        #Razón: Dar soporte a nodos en desarrollo
+        self._path = None
+        if "path" in plugins_specs:
+            self._developmentPlugin = True
+            from pathlib import Path
+            self._path = Path(plugins_specs["path"])
+            if self._path.suffix is '': #Ruta a directorio --> self._localPath ~= ".../dir1"
+                self._initPath = self._path / "__init__.py"
+                self._modulePath = self._path
+            else:
+                self._initPath = self._modulePath 
+                self._modulePath = self._modulePath.parent
+            import re #RegularExpression
+            if not re.search("^\w+$",self._modulePath.name):
+                raise Exception("Your module name can only have alphabet characters [Aa-Zz], numbers [0-9] or underscore char(_)")
+            import sys
+            sys.path.insert(0,str(self._modulePath))
+        else:
+            self._developmentPlugin = False
 
     @property
     def name(self) -> str:
@@ -34,6 +54,10 @@ class Plugin:
     def active(self) -> bool:
         return self._active
 
+    @property
+    def path(self) -> str:
+        return self._path
+
     @active.setter
     def active(self, toggle: bool):
         self._active = toggle
@@ -49,8 +73,12 @@ class Plugin:
 
     def load(self):
         module_importable_name = self.name.replace("-", "_")
-        self._module = importlib.import_module(module_importable_name)
-
+        if self._developmentPlugin is False: #Production Module
+            self._module = importlib.import_module(module_importable_name)
+        else: #Development Module
+            spec = importlib.util.spec_from_file_location(module_importable_name, self._initPath)
+            self._module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(self._module) #Para cargar en memoria el modulo y acceder a el
         try:
             self._module.load_plugin()
             self._update_plugin_metadata()
@@ -71,6 +99,8 @@ class Plugin:
         self._module = None
 
     def _update_plugin_metadata(self):
+        if self._developmentPlugin is True:
+            return
         try:
 
             def get_metadata_value(key: str, package):
@@ -86,4 +116,5 @@ class Plugin:
             LOGGER.exception(err)
 
     def to_dict(self):
-        return {"version": self.version, "summary": self.summary, "active": self.active}
+        if self.path is not None: return {"version": self.version, "summary": self.summary, "active": self.active, "path":str(self.path) }
+        else: return {"version": self.version, "summary": self.summary, "active": self.active }
