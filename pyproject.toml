@@ -1,15 +1,15 @@
 [tool.poetry]
 name = "dial-core"
-version = "0.22a0"
+version = "0.23a0"
 description = "Deep Learning, node-based framework"
-authors = ["David Afonso <davafons@gmail.com>"]
+authors = ["David Afonso <davafons@gmail.com>","Javier Duque Melguizo <javierduquemelguizo@gmail.com>"]
 
 license = "GPL-3.0-only"
 
 readme = "README.md"
 
-repository = "https://github.com/dial-app/dial-core"
-homepage = "https://github.com/dial-app/dial-core"
+repository = "https://github.com/JDM-ULL-93/dial-core"
+homepage = "https://github.com/JDM-ULL-93/dial-core"
 
 keywords = ["deep-learning"]
 
